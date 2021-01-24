@@ -15,10 +15,10 @@
  * the terms of the provided license as published by Whirl-i-Gig
  *
  * CollectiveAccess is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTIES whatsoever, including any implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * WITHOUT ANY WARRANTIES whatsoever, including any implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *
- * This source code is free and modifiable under the terms of 
+ * This source code is free and modifiable under the terms of
  * GNU General Public License. (http://www.gnu.org/copyleft/gpl.html). See
  * the "license.txt" file for details, or visit the CollectiveAccess web site at
  * http://www.CollectiveAccess.org
@@ -29,15 +29,21 @@
 	define("__CA_MICROTIME_START_OF_REQUEST__", microtime());
 	define("__CA_BASE_MEMORY_USAGE__", memory_get_usage(true));
 	require("./app/helpers/errorHelpers.php");
-	
-	if (!file_exists('./setup.php')) {
+
+
+	$setupFile =  current(array_filter(['./setup.php', '../setup.php', '../../setup.php', '../../config/providence-setup.php'],
+		function($fn) { return file_exists($fn); })
+	);
+
+	if (empty($setupFile))
+	{
 		caDisplayException(new ApplicationException("No setup.php found"));
-		exit; 
+		exit;
 	}
-	require('./setup.php');
+
+	require($setupFile);
 	require_once('./app/helpers/post-setup.php');
 
-	try {
 		// connect to database
 		$o_db = new Db(null, null, false);
 		if (!$o_db->connected()) {
@@ -76,12 +82,12 @@
 		// Prevent caching
 		$resp->addHeader("Cache-Control", "no-cache, must-revalidate");
 		$resp->addHeader("Expires", "Mon, 26 Jul 1997 05:00:00 GMT");
-		
+
 		// Security headers
 		$resp->addHeader("X-XSS-Protection", "1; mode=block");
 		$resp->addHeader("X-Frame-Options", "SAMEORIGIN");
-		$resp->addHeader("Content-Security-Policy", "script-src 'self' maps.googleapis.com cdn.knightlab.com nominatim.openstreetmap.org  ajax.googleapis.com tagmanager.google.com www.googletagmanager.com www.google-analytics.com www.google.com/recaptcha/ www.gstatic.com 'unsafe-inline' 'unsafe-eval';"); 
-		$resp->addHeader("X-Content-Security-Policy", "script-src 'self' maps.googleapis.com cdn.knightlab.com nominatim.openstreetmap.org  ajax.googleapis.com  tagmanager.google.com www.googletagmanager.com www.google-analytics.com www.google.com/recaptcha/ www.gstatic.com 'unsafe-inline' 'unsafe-eval';"); 
+		$resp->addHeader("Content-Security-Policy", "script-src 'self' maps.googleapis.com cdn.knightlab.com nominatim.openstreetmap.org  ajax.googleapis.com tagmanager.google.com www.googletagmanager.com www.google-analytics.com www.google.com/recaptcha/ www.gstatic.com 'unsafe-inline' 'unsafe-eval';");
+		$resp->addHeader("X-Content-Security-Policy", "script-src 'self' maps.googleapis.com cdn.knightlab.com nominatim.openstreetmap.org  ajax.googleapis.com  tagmanager.google.com www.googletagmanager.com www.google-analytics.com www.google.com/recaptcha/ www.gstatic.com 'unsafe-inline' 'unsafe-eval';");
 
 		//
 		// Don't try to authenticate when doing a login attempt or trying to access the 'forgot password' feature
@@ -124,6 +130,7 @@
 		//
 		$resp->sendResponse();
 		$req->close();
+try {
 	} catch (Exception $e) {
 		caDisplayException($e);
 	}
