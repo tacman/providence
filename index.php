@@ -30,7 +30,7 @@
 	define("__CA_BASE_MEMORY_USAGE__", memory_get_usage(true));
 	require("./app/helpers/errorHelpers.php");
 
-	$setupFileCandidates = ['./setup.php', '../setup.php', '../../setup.php', '../../../setup.php', '../../../config/providence-setup.php'];
+	$setupFileCandidates = ['../../../config/providence-setup.php', './setup.php', '../setup.php', '../../setup.php', '../../../setup.php'];
 	$setupFile =  current(array_filter($setupFileCandidates,
 		function($fn) { return file_exists($fn); })
 	);
