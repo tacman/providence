@@ -3174,8 +3174,9 @@
 		 */
  		public function getApplicableElementCodes($pn_type_id=null, $pb_include_sub_element_codes=false, $pb_dont_cache=true) {
 			if (!$pn_type_id) { $pn_type_id = null; }
- 			 
-			if (!$pb_dont_cache && is_array($va_tmp = BaseModelWithAttributes::$s_applicable_element_code_cache[$this->tableNum().'/'.$pn_type_id.'/'.($pb_include_sub_element_codes ? 1 : 0)])) {
+
+		    $cache_key = $this->tableNum() . '/' . $pn_type_id . '/' . ( $pb_include_sub_element_codes ? 1 : 0 );
+		    if ( !$pb_dont_cache && is_array($va_tmp = BaseModelWithAttributes::$s_applicable_element_code_cache[ $cache_key ])) {
 				return $va_tmp;
 			}
  			
@@ -3234,7 +3235,7 @@
 					$va_codes[$qr_res->get('element_id')] = $qr_res->get('element_code');
 				}
  			}
- 			BaseModelWithAttributes::$s_applicable_element_code_cache[$this->tableNum().'/'.$pn_type_id.'/'.($pb_include_sub_element_codes ? 1 : 0)] = $va_codes;
+		    BaseModelWithAttributes::$s_applicable_element_code_cache[ $cache_key ] = $va_codes;
  			return $va_codes;
  		}
  		# ------------------------------------------------------------------

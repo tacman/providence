@@ -25,6 +25,9 @@
  *
  * ----------------------------------------------------------------------
  */
+
+use Zend_Feed;
+
  	require_once(__CA_LIB_DIR__.'/BaseWidget.php');
  	require_once(__CA_LIB_DIR__.'/IWidget.php');
 
