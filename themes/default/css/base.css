@@ -1333,6 +1333,10 @@ div.formLabelUploadSizeNote {
     max-height: 700px;
 }
 
+.bundleSubLabel .batchEdit { 
+    float: right;
+}
+
 .caDupeLabelMessageBox {
     margin: 0 auto;
     width: 200px;
@@ -3735,7 +3739,6 @@ a.hierarchyBrowserLevelEditButton {
 
 div.hierarchyBrowseTab {
     width: 712px;
-    overflow: hidden;
     font-weight: normal;
     margin-left:-10px;
 }

@@ -1,13 +1,13 @@
 <?php
 /** ---------------------------------------------------------------------
- * app/lib/VersionUpdate109.php :
+ * app/lib/Cache/JSONEncoder.php : JSON-based Stash file cache encoder 
  * ----------------------------------------------------------------------
  * CollectiveAccess
  * Open-source collections management software
  * ----------------------------------------------------------------------
  *
  * Software by Whirl-i-Gig (http://www.whirl-i-gig.com)
- * Copyright 2014 Whirl-i-Gig
+ * Copyright 2021 Whirl-i-Gig
  *
  * For more information visit http://www.CollectiveAccess.org
  *
@@ -24,33 +24,42 @@
  * http://www.CollectiveAccess.org
  *
  * @package CollectiveAccess
- * @subpackage Installer
+ * @subpackage Cache
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License version 3
  *
  * ----------------------------------------------------------------------
  */
- 
- /**
-  *
-  */
- 
- require_once(__CA_LIB_DIR__.'/BaseVersionUpdater.php');
- require_once(__CA_LIB_DIR__."/Db.php");
- require_once(__CA_MODELS_DIR__."/ca_relationship_types.php");
- require_once(__CA_MODELS_DIR__.'/ca_locales.php');
- 
-	class VersionUpdate109 extends BaseVersionUpdater {
-		# -------------------------------------------------------
-		protected $opn_schema_update_to_version_number = 109;
-		
-		# -------------------------------------------------------
-		/**
-		 *
-		 * @return string HTML to display after update
-		 */
-		public function getPostupdateMessage() {
-			return _t("The CollectiveAccess authentication back-end had a major overhaul in this update. If you previously used the stock authentication configuration, there is no further action necessary. However, if you have made changes to your authentication.conf configuration file, chances are that you won't be able to log into your system. Please take a close look at the new stock file and change your local configuration accordingly.");
-		}
-		# -------------------------------------------------------
-	}
-?>
+
+namespace Stash\Driver\FileSystem;
+
+class JSONEncoder implements EncoderInterface {
+    public function deserialize($path) {
+        if (!file_exists($path)) {
+            return false;
+        }
+
+        $raw = json_decode(file_get_contents($path), true);
+        if (is_null($raw) || !is_array($raw)) {
+            return false;
+        }
+
+        $data = $raw['data'];
+        $expiration = isset($raw['expiration']) ? $raw['expiration'] : null;
+
+        return ['data' => $data, 'expiration' => $expiration];
+    }
+
+    public function serialize($key, $data, $expiration = null) {
+        $processed = json_encode([
+            'key' => $key,
+            'data' => $data,
+            'expiration' => $expiration
+        ]);
+
+        return $processed;
+    }
+
+    public function getExtension() {
+        return '.json';
+    }
+}
